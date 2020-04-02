@@ -1,0 +1,27 @@
+{
+  "name": "annotation.js",
+  "version": "1.0.0",
+  "description": "Library for annotate images on Javascript",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/groundbyNG/annotation.js.git"
+  },
+  "author": "Nikita Gaponov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/groundbyNG/annotation.js/issues"
+  },
+  "homepage": "https://github.com/groundbyNG/annotation.js#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.1.0",
+    "babel-preset-es2015": "^6.24.1",
+    "dotenv": "^8.2.0",
+    "webpack": "^4.42.1",
+    "webpack-dev-server": "^3.10.3"
+  }
+}
