@@ -1,14 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel='stylesheet' href='dist/style.css'>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="">Call Me</div>
+    <h1>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad dicta distinctio, eligendi facilis qui vitae voluptate? Amet cum, eum inventore natus necessitatibus nesciunt possimus repellat sed sit sunt, tenetur unde?</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut distinctio, dolor dolorum error exercitationem facilis illum, in, laborum mollitia nemo quasi quibusdam repellendus ut? Consequuntur dolorem eligendi est quo sed?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at aut commodi expedita explicabo harum natus nemo neque possimus praesentium, quia rem similique suscipit tempora, ut veniam, veritatis voluptatem voluptatibus.</p>
     <script src="dist/annotation.js" charset="utf-8"></script>
     <script type="text/javascript">
-        new Annotation();
+      document.body.appendChild(
+        new Annotation(
+          "https://i.pinimg.com/originals/a8/62/05/a86205381c4d401c22a06f798fe4f741.jpg",
+          { width: '600px', height: 'auto' }
+        ).init()
+      );
     </script>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut distinctio, dolor dolorum error exercitationem facilis illum, in, laborum mollitia nemo quasi quibusdam repellendus ut? Consequuntur dolorem eligendi est quo sed?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at aut commodi expedita explicabo harum natus nemo neque possimus praesentium, quia rem similique suscipit tempora, ut veniam, veritatis voluptatem voluptatibus.</p>
 </body>
 </html>
