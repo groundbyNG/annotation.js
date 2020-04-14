@@ -1,0 +1,19 @@
+.annotation-tooltip {
+  bottom: 4px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 4px;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  padding: 10px;
+  transition: opacity 0.21s ease-in-out 0s;
+
+  &_open {
+    opacity: 1;
+  }
+}
