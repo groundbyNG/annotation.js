@@ -1,6 +1,8 @@
 @import "pane";
 @import "img";
+@import "tooltip";
 
 .annotation-container {
   position: relative;
+  font-family: "Open Sans", sans-serif;
 }

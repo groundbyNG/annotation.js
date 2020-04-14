@@ -1,7 +1,9 @@
-import { ConfigOptions } from '../types';
+import { ConfigOptions } from '@/types';
 
-export const defaultConfig: ConfigOptions = {
+const defaultConfig: ConfigOptions = {
   editable: false,
   width: '100%',
   height: '100%',
 };
+
+export default defaultConfig;

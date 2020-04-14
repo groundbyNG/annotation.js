@@ -22,6 +22,9 @@ module.exports = (env, argv) => {
             filename: isProduction ? 'dist/annotation.min.js' : 'dist/annotation.js'
         },
         resolve: {
+            alias: {
+                "@": path.resolve(__dirname, "src")
+            },
             extensions: [".ts", ".js"]
         },
         module: {
