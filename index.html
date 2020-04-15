@@ -23,9 +23,9 @@
     <script src="dist/annotation.js" charset="utf-8"></script>
     <script type="text/javascript">
       document.body.appendChild(
-        new Annotation(
+        new Annotable(
           "https://i.pinimg.com/originals/a8/62/05/a86205381c4d401c22a06f798fe4f741.jpg",
-          { width: '600px', height: 'auto' }
+          { width: '600px', height: 'auto', selectionShape: 'rect' }
         ).init()
       );
     </script>
