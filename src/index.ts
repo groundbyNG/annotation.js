@@ -1,29 +1,30 @@
-import { Selection, Tooltip } from '@/components';
+import { Tooltip, Pane } from '@/components';
 
-import { defaultConfig, SVG_NAMESPACE, TOOLTIP_TEXT } from '@/constants';
+import { defaultConfig } from '@/constants';
 
 import { ConfigOptions } from '@/types';
 
 import '@/styles/index.scss';
 
-class Annotation {
+class Annotable {
   readonly config: ConfigOptions;
 
   readonly element: string | HTMLElement;
 
   private container: HTMLDivElement;
 
-  private pane: SVGElement;
+  private pane: Pane;
 
   constructor(element: string | HTMLElement, config: ConfigOptions = defaultConfig) {
     this.config = config;
     this.element = element;
+    this.pane = new Pane(this.config);
   }
 
   public init = (): HTMLElement => {
     const container = this.initContainer();
     container.appendChild(this.initImg());
-    container.appendChild(this.initPane());
+    container.appendChild(this.pane.getPaneElement());
     container.appendChild(Tooltip.getInstance());
     return container;
   };
@@ -45,23 +46,6 @@ class Annotation {
     }
     return this.element;
   };
-
-  private initPane = (): SVGElement => {
-    const pane = document.createElementNS(SVG_NAMESPACE, 'svg');
-    pane.classList.add('annotation-pane');
-    pane.appendChild(document.createElementNS(SVG_NAMESPACE, 'defs'));
-
-    const selection = new Selection(pane, { shape: 'rect' });
-
-    pane.addEventListener('mousedown', selection.mouseDownHandler);
-    pane.addEventListener('mousemove', selection.mouseMoveHandler);
-    pane.addEventListener('mouseup', selection.mouseUpHandler);
-    pane.addEventListener('mouseover', selection.mouseOverHandler);
-    pane.addEventListener('mouseout', selection.mouseOutHandler);
-
-    this.pane = pane;
-    return pane;
-  };
 }
 
-module.exports = Annotation;
+module.exports = Annotable;
