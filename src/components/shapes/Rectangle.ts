@@ -15,7 +15,6 @@ class Rectangle {
     this.element = document.createElementNS(SVG_NAMESPACE, 'rect');
     this.element.setAttribute('width', '0');
     this.element.setAttribute('height', '0');
-    this.element.setAttribute('fill', 'black');
   }
 
   public setX = (x: number): void => {
@@ -48,6 +47,9 @@ class Rectangle {
 
   public getHeight = (): number => +this.height;
 
+  public addVisibleStyles = (): void => {
+    this.element.classList.add('annotation-pane__element');
+  }
 }
 
 export default Rectangle;

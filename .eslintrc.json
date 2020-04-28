@@ -38,6 +38,7 @@
                 "js": "never",
                 "ts": "never"
             }
-        ]
+        ],
+        "max-len": ["error", { "code": 120 }]
     }
 }

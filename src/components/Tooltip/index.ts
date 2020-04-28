@@ -1,27 +1,33 @@
 import { TOOLTIP_TEXT } from '@/constants';
 
-const tooltip = document.createElement('div');
-tooltip.classList.add('annotation-tooltip');
-tooltip.textContent = TOOLTIP_TEXT;
+class Tooltip {
+  readonly tooltipElement: HTMLDivElement;
 
-let visible = false;
+  private visible = false;
 
-const Tooltip = {
-  getInstance: (): HTMLDivElement => tooltip,
-  openTooltip: (): void => {
-    if (!tooltip.classList.contains('annotation-tooltip_open')) {
-      tooltip.classList.add('annotation-tooltip_open');
-      visible = true;
+  constructor() {
+    this.tooltipElement = document.createElement('div');
+    this.tooltipElement.classList.add('annotation-tooltip');
+    this.tooltipElement.textContent = TOOLTIP_TEXT;
+  }
+
+  public getElement = (): HTMLDivElement => this.tooltipElement;
+
+  public openTooltip = (): void => {
+    if (!this.tooltipElement.classList.contains('annotation-tooltip_open')) {
+      this.tooltipElement.classList.add('annotation-tooltip_open');
+      this.visible = true;
     }
-  },
-  closeTooltip: (): void => {
-    if (tooltip.classList.contains('annotation-tooltip_open')) {
-      tooltip.classList.remove('annotation-tooltip_open');
-      visible = false;
-    }
-  },
-  isOpen: (): boolean => visible,
-};
+  };
 
-Object.freeze(Tooltip);
+  public closeTooltip = (): void => {
+    if (this.tooltipElement.classList.contains('annotation-tooltip_open')) {
+      this.tooltipElement.classList.remove('annotation-tooltip_open');
+      this.visible = false;
+    }
+  };
+
+  public isOpen = (): boolean => this.visible;
+}
+
 export default Tooltip;

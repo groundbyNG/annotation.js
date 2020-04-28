@@ -3,4 +3,5 @@ export interface ConfigOptions {
   width: string;
   height: string;
   selectionShape: 'rect';
+  editableShape?: boolean;
 }

@@ -1,10 +1,12 @@
-import { Tooltip, Rectangle } from '@/components';
+import { Rectangle } from '@/components';
 
 import { SVG_NAMESPACE } from '@/constants';
 
 import { Point } from '@/types';
 
 class RectangleSelection {
+  readonly pane: SVGElement;
+
   private shape: Rectangle;
 
   private startCoordinates: Point;
@@ -13,60 +15,30 @@ class RectangleSelection {
 
   private isSelectionStart = false;
 
-  readonly addShadow: (shadow: SVGElement) => void;
+  private isSelectionEnd = false;
 
-  readonly removeShadow: (shadow: SVGElement) => void;
-
-  readonly getPaneCoordinates: () => DOMRect;
-
-  constructor(
-    addSelectionMask: (mask: SVGElement) => void,
-    addShadow: (shadow: SVGElement) => void,
-    removeShadow: (shadow: SVGElement) => void,
-    getPaneCoordinates: () => DOMRect,
-    shape: Rectangle,
-  ) {
-    this.addShadow = addShadow;
-    this.removeShadow = removeShadow;
-    this.getPaneCoordinates = getPaneCoordinates;
+  constructor(pane: SVGElement, shape: Rectangle) {
+    this.pane = pane;
     this.shape = shape;
-    addSelectionMask(this.createMask(this.shape.getElement()));
+    this.addSelectionMask(this.createMask(this.shape.getElement()));
   }
 
-  public mouseOverHandler = (): void => {
-    if (!Tooltip.isOpen() && !this.isSelectionStart) {
-      Tooltip.openTooltip();
-    }
-  };
-
-  public mouseOutHandler = (): void => {
-    if (Tooltip.isOpen()) {
-      Tooltip.closeTooltip();
-    }
-  };
-
   public mouseDownHandler = ({ clientX, clientY }: MouseEvent): void => {
-    console.log('mousedown');
-    this.isSelectionStart = true;
-    Tooltip.closeTooltip();
+    if (!this.isSelectionStart) {
+      this.startCoordinates = this.calculateCoordinates(clientX, clientY);
 
-    this.startCoordinates = this.calculateCoordinates(clientX, clientY);
+      // changing visible shape coordinates
+      this.shape.setX(this.startCoordinates.x);
+      this.shape.setY(this.startCoordinates.y);
+      this.shape.setWidth(0);
+      this.shape.setHeight(0);
 
-    // changing visible shape coordinates
-    this.shape.setX(this.startCoordinates.x);
-    this.shape.setY(this.startCoordinates.y);
-    this.shape.setWidth(0);
-    this.shape.setHeight(0);
-    // add container for shadow layout
-    this.shadow = document.createElementNS(SVG_NAMESPACE, 'rect');
-    this.shadow.setAttribute('width', '100%');
-    this.shadow.setAttribute('height', '100%');
-    this.shadow.setAttribute('mask', 'url(#annotation-shadow)');
-    this.addShadow(this.shadow);
+      this.initSelection();
+    }
   };
 
   public mouseMoveHandler = ({ clientX, clientY }: MouseEvent): void => {
-    if (this.isSelectionStart) {
+    if (this.isSelectionStart && !this.isSelectionEnd) {
       console.log('mousemove');
       const endCoordinates = this.calculateCoordinates(clientX, clientY);
       if (endCoordinates.x - this.startCoordinates.x < 0
@@ -90,15 +62,11 @@ class RectangleSelection {
     }
   };
 
-  public mouseUpHandler = (event: MouseEvent): void => {
-    console.log('mouseup', event);
-    this.isSelectionStart = false;
-    if (this.shadow) {
-      this.removeShadow(this.shadow);
-      this.shadow = null;
-    }
+  public mouseUpHandler = (): void => {
+    this.isSelectionEnd = true;
   };
 
+  // creating mask DOM element
   private createMask = (shape: SVGElement): SVGElement => {
     const mask = document.createElementNS(SVG_NAMESPACE, 'mask');
     mask.setAttribute('id', 'annotation-shadow');
@@ -114,12 +82,41 @@ class RectangleSelection {
     return mask;
   };
 
+  // calculate relative to pane coordinates
   private calculateCoordinates = (clientX: number, clientY: number): Point => {
-    const { left, top } = this.getPaneCoordinates();
+    const { left, top } = this.pane.getBoundingClientRect();
     const x = clientX - left;
     const y = clientY - top;
     return { x, y };
-  }
+  };
+
+  // add container for shadow layout, define start selection
+  private initSelection = (): void => {
+    if (this.shadow) { this.shadow = null; }
+    this.shadow = document.createElementNS(SVG_NAMESPACE, 'rect');
+    this.shadow.setAttribute('width', '100%');
+    this.shadow.setAttribute('height', '100%');
+    this.shadow.setAttribute('mask', 'url(#annotation-shadow)');
+    this.pane.appendChild(this.shadow);
+    this.isSelectionStart = true;
+  };
+
+  // remove container for shadow layout, set default selection flags
+  public removeSelection = (): void => {
+    if (this.shadow) {
+      this.pane.removeChild(this.shadow);
+      this.shadow = null;
+      this.isSelectionStart = false;
+      this.isSelectionEnd = false;
+    }
+  };
+
+  public getSelectionState = (): boolean => this.isSelectionStart;
+
+  // add created mask to pane in DOM
+  private addSelectionMask = (mask: SVGElement): void => {
+    this.pane.firstChild.appendChild(mask);
+  };
 }
 
 export default RectangleSelection;
