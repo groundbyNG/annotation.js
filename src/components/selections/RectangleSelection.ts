@@ -19,8 +19,6 @@ class RectangleSelection {
 
   private isSelectionStart = false;
 
-  // private isSelectionEnd = false;
-
   constructor(pane: SVGElement, shape: Rectangle) {
     this.pane = pane;
     this.shape = shape;
@@ -108,7 +106,6 @@ class RectangleSelection {
       this.pane.removeChild(this.shadow);
       this.shadow = null;
       this.isSelectionStart = false;
-      // this.isSelectionEnd = false;
     }
   };
 
