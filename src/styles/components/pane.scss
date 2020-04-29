@@ -1,0 +1,19 @@
+.annotation-pane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  &__element {
+    stroke: $black;
+    stroke-width: 2px;
+    stroke-opacity: 0.4;
+    fill: transparent;
+
+    &:hover {
+      stroke: $sunglow;
+      stroke-opacity: 1;
+    }
+  }
+}

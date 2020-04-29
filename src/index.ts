@@ -1,4 +1,4 @@
-import { Tooltip, Pane } from '@/components';
+import { Tooltip, Pane, Description } from '@/components';
 
 import { defaultConfig } from '@/constants';
 
@@ -15,17 +15,25 @@ class Annotable {
 
   private pane: Pane;
 
+  private tooltip: Tooltip;
+
+  private description: Description;
+
   constructor(element: string | HTMLElement, config: ConfigOptions = defaultConfig) {
     this.config = config;
     this.element = element;
-    this.pane = new Pane(this.config);
+    this.tooltip = new Tooltip();
+    this.description = new Description();
+    this.pane = new Pane(this.config, this.tooltip, this.description);
   }
 
+  // append main components to container (exception: components should be in right order)
   public init = (): HTMLElement => {
     const container = this.initContainer();
     container.appendChild(this.initImg());
-    container.appendChild(this.pane.getPaneElement());
-    container.appendChild(Tooltip.getInstance());
+    container.appendChild(this.pane.getElement());
+    container.appendChild(this.tooltip.getElement());
+    container.appendChild(this.description.getElement());
     return container;
   };
 
