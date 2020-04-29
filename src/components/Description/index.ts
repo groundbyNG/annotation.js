@@ -1,7 +1,9 @@
 import { DESCRIPTION_PLACEHOLDER, DESCRIPTION_SUBMIT, DESCRIPTION_INDENT } from '@/constants';
 
+import { DescriptionConfig } from '@/components/Description/types';
+
 class Description {
-  private description: HTMLDivElement;
+  readonly description: HTMLElement;
 
   readonly textarea: HTMLTextAreaElement;
 
@@ -11,7 +13,9 @@ class Description {
 
   private submitButtonVisible = false;
 
-  constructor() {
+  private resolver: Function;
+
+  constructor(descriptionConfig?: DescriptionConfig) {
     this.description = document.createElement('div');
     this.description.classList.add('annotation-description');
 
@@ -20,14 +24,13 @@ class Description {
     this.textarea.setAttribute('placeholder', DESCRIPTION_PLACEHOLDER);
     this.description.appendChild(this.textarea);
 
-
     this.submitButton = document.createElement('button');
     this.submitButton.classList.add('annotation-description__submit');
     this.submitButton.textContent = DESCRIPTION_SUBMIT;
     this.description.appendChild(this.submitButton);
   }
 
-  public getElement = (): HTMLDivElement => this.description;
+  public getElement = (): HTMLElement => this.description;
 
   public runEditor = (top: number, left: number): Promise<void | string> => new Promise((resolve) => {
     if (!this.description.classList.contains('annotation-description_open')) {
@@ -35,17 +38,10 @@ class Description {
       this.description.style.top = `${top + DESCRIPTION_INDENT}px`;
       this.description.style.left = `${left}px`;
 
-      this.textarea.addEventListener('input', () => {
-        if (this.textarea.value && !this.submitButtonVisible) {
-          this.showSubmit();
-        } else if (!this.textarea.value) {
-          this.hideSubmit();
-        }
-      });
-      this.submitButton.addEventListener('click', () => {
-        resolve(this.textarea.value);
-        this.closeEditor();
-      });
+      this.resolver = resolve;
+
+      this.textarea.addEventListener('input', this.inputHandler);
+      this.submitButton.addEventListener('click', this.clickHandler);
       this.visible = true;
     }
   });
@@ -53,9 +49,30 @@ class Description {
   public closeEditor = (): void => {
     if (this.description.classList.contains('annotation-description_open')) {
       this.description.classList.remove('annotation-description_open');
+
+      this.textarea.removeEventListener('input', this.inputHandler);
       this.textarea.value = '';
+
+      this.submitButton.removeEventListener('click', this.clickHandler);
+
       this.visible = false;
+      delete this.resolver;
     }
+  };
+
+  private inputHandler = (): void => {
+    if (this.textarea.value && !this.submitButtonVisible) {
+      this.showSubmit();
+    } else if (!this.textarea.value) {
+      this.hideSubmit();
+    }
+  };
+
+  private clickHandler = (): void => {
+    if (this.resolver) {
+      this.resolver(this.textarea.value);
+    }
+    this.closeEditor();
   };
 
   private showSubmit = (): void => {

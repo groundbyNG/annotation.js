@@ -2,6 +2,8 @@ import { Rectangle } from '@/components';
 
 import { SVG_NAMESPACE } from '@/constants';
 
+import { calcRelativeCoords } from '@/helpers';
+
 import { Point } from '@/types';
 
 class RectangleSelection {
@@ -9,23 +11,26 @@ class RectangleSelection {
 
   private shape: Rectangle;
 
+  readonly mask: SVGElement;
+
   private startCoordinates: Point;
 
   private shadow: SVGElement;
 
   private isSelectionStart = false;
 
-  private isSelectionEnd = false;
+  // private isSelectionEnd = false;
 
   constructor(pane: SVGElement, shape: Rectangle) {
     this.pane = pane;
     this.shape = shape;
-    this.addSelectionMask(this.createMask(this.shape.getElement()));
+    this.mask = this.createMask(this.shape.getElement());
+    this.addSelectionMask(this.mask);
   }
 
   public mouseDownHandler = ({ clientX, clientY }: MouseEvent): void => {
     if (!this.isSelectionStart) {
-      this.startCoordinates = this.calculateCoordinates(clientX, clientY);
+      this.startCoordinates = calcRelativeCoords(this.pane, clientX, clientY);
 
       // changing visible shape coordinates
       this.shape.setX(this.startCoordinates.x);
@@ -38,9 +43,9 @@ class RectangleSelection {
   };
 
   public mouseMoveHandler = ({ clientX, clientY }: MouseEvent): void => {
-    if (this.isSelectionStart && !this.isSelectionEnd) {
+    if (this.isSelectionStart) {
       console.log('mousemove');
-      const endCoordinates = this.calculateCoordinates(clientX, clientY);
+      const endCoordinates = calcRelativeCoords(this.pane, clientX, clientY);
       if (endCoordinates.x - this.startCoordinates.x < 0
         && endCoordinates.y - this.startCoordinates.y < 0) {
         this.shape.setX(endCoordinates.x);
@@ -62,9 +67,13 @@ class RectangleSelection {
     }
   };
 
-  public mouseUpHandler = (): void => {
-    this.isSelectionEnd = true;
-  };
+  public mouseUpHandler = (): Promise<boolean> => new Promise((resolve) => {
+    this.isSelectionStart = false;
+    resolve(
+      Math.abs(this.shape.getX() - this.shape.getX() + this.shape.getWidth()) > 1
+      && Math.abs(this.shape.getY() - this.shape.getY() + this.shape.getHeight()) > 1,
+    );
+  });
 
   // creating mask DOM element
   private createMask = (shape: SVGElement): SVGElement => {
@@ -80,14 +89,6 @@ class RectangleSelection {
     mask.appendChild(rect);
     mask.appendChild(shape);
     return mask;
-  };
-
-  // calculate relative to pane coordinates
-  private calculateCoordinates = (clientX: number, clientY: number): Point => {
-    const { left, top } = this.pane.getBoundingClientRect();
-    const x = clientX - left;
-    const y = clientY - top;
-    return { x, y };
   };
 
   // add container for shadow layout, define start selection
@@ -107,7 +108,7 @@ class RectangleSelection {
       this.pane.removeChild(this.shadow);
       this.shadow = null;
       this.isSelectionStart = false;
-      this.isSelectionEnd = false;
+      // this.isSelectionEnd = false;
     }
   };
 
@@ -117,6 +118,11 @@ class RectangleSelection {
   private addSelectionMask = (mask: SVGElement): void => {
     this.pane.firstChild.appendChild(mask);
   };
+
+  public setCurrentAnnotation = (shape: Rectangle): void => {
+    this.shape = shape;
+    this.mask.appendChild(this.shape.getElement());
+  }
 }
 
 export default RectangleSelection;

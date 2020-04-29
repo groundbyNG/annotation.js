@@ -57,6 +57,8 @@ class Pane {
   public mouseDownHandler = (event: MouseEvent): void => {
     console.log('mousedown');
     this.tooltip.closeTooltip();
+    this.description.closeEditor();
+    this.selection.removeSelection();
     this.selection.mouseDownHandler(event);
   };
 
@@ -66,11 +68,20 @@ class Pane {
 
   public mouseUpHandler = async (): Promise<void> => {
     console.log('mouseup');
-    this.selection.mouseUpHandler();
-    if (this.config.editableShape) {
-      await this.editShape();
+    const isSelectionEnd = await this.selection.mouseUpHandler();
+    if (isSelectionEnd) {
+      if (this.config.editableShape) {
+        await this.editShape();
+      }
+      await this.editDescription();
+      this.addAnnotation(this.currentAnnotation);
+
+      // creating new annotation object
+      this.currentAnnotation = this.createAnnotation(this.config.selectionShape);
+      this.selection.setCurrentAnnotation(this.currentAnnotation.shape);
+      console.log(this.getAnnotations());
     }
-    await this.editDescription();
+    this.selection.removeSelection();
   };
 
   public mouseOverHandler = (): void => {
@@ -109,8 +120,6 @@ class Pane {
       this.annotations.push(annotation);
       annotation.shape.addVisibleStyles();
       this.pane.appendChild(annotation.shape.getElement());
-      this.currentAnnotation = this.createAnnotation(this.config.selectionShape);
-      console.log(this.getAnnotations());
     }
   };
 
@@ -124,8 +133,6 @@ class Pane {
       const left = shape.getX();
 
       this.currentAnnotation.payload = await this.description.runEditor(top, left);
-      this.selection.removeSelection();
-      this.addAnnotation(this.currentAnnotation);
     }
   };
 }
