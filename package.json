@@ -36,7 +36,7 @@
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
     "mocha": "^7.1.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "sass-loader": "^8.0.2",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.3",
